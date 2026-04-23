@@ -1,0 +1,51 @@
+CREATE DATABASE loja;
+
+use loja;
+
+create table Produtos(
+Id_produto INT AUTO_INCREMENT PRIMARY KEY,
+nome VARCHAR(100),
+qtn_estoque INT NOT NULL
+
+);
+
+create table Pedidos(
+Id_pedido INT AUTO_INCREMENT PRIMARY KEY,
+qnt_Vendida INT,
+data_Venda DATETIME,
+produto_ID INT,
+
+FOREIGN KEY (produto_ID)
+REFERENCES Produtos(Id_produto)
+
+)
+DELIMITER $$
+
+CREATE TRIGGER tg_atualizar_estoque
+AFTER INSERT ON Pedidos
+FOR EACH ROW
+BEGIN 
+   
+    
+    UPDATE Produtos 
+    SET qtn_Estoque = qtn_Estoque - NEW.qnt_Vendida
+    WHERE Id_produto = NEW.produto_ID; 
+
+END$$
+
+DELIMITER ;
+
+
+INSERT INTO Produtos (nome, qtn_estoque) VALUES ('Notebook Dell', 50);
+INSERT INTO Produtos (nome, qtn_estoque) VALUES ('Mouse Gamer', 100);
+
+
+SELECT * FROM Produtos;
+
+
+INSERT INTO Pedidos (qnt_Vendida, data_Venda, produto_ID) 
+VALUES (5, NOW(), 1);
+
+
+INSERT INTO Pedidos (qnt_Vendida, data_Venda, produto_ID) 
+VALUES (20, NOW(), 2);
